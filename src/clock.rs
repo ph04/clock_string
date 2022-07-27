@@ -57,10 +57,10 @@ fn clockify_internals<const D: usize>(hms_time: HMSTime, foreground: char, backg
         .flat_map(|row_index| {
             result
                 .iter()
-                .flat_map(move |digit| 
-                    digit[row_index]
-                        .map(|c| if c { foreground } else { background }))
-                        .chain(Some('\n'))
+                .flat_map(move |digit|
+                    digit[row_index].map(|c| if c { foreground } else { background })
+                )
+                .chain(Some('\n'))
         })
         .collect::<String>()
 }
