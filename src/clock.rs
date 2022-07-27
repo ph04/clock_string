@@ -53,17 +53,14 @@ fn clockify_internals<const D: usize>(hms_time: HMSTime, foreground: char, backg
         .enumerate()
         .for_each(|(idx, array)| result[idx] = array);
 
-    let mut result_str = String::new();
-
-    for row_index in 0..5 {
-        for digit in result {
-            digit[row_index]
+    (0..5)
+        .flat_map(|row_index| {
+            result
                 .iter()
-                .for_each(|c| result_str.push(if *c { foreground } else { background }))
-        }
-
-        result_str.push('\n');
-    }
-
-    result_str
+                .flat_map(move |digit| 
+                    digit[row_index]
+                        .map(|c| if c { foreground } else { background }))
+                        .chain(Some('\n'))
+        })
+        .collect::<String>()
 }
