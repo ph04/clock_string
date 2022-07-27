@@ -32,15 +32,15 @@ impl HMSTime {
     }
 }
 
-pub fn clockify(hms_time: HMSTime, character: char) -> String {
-    clockify_internals::<5>(hms_time, character)
+pub fn clockify(hms_time: HMSTime, foreground: char, background: char) -> String {
+    clockify_internals::<5>(hms_time, foreground, background)
 }
 
-pub fn clockify_with_seconds(hms_time: HMSTime, character: char) -> String {
-    clockify_internals::<8>(hms_time, character)
+pub fn clockify_with_seconds(hms_time: HMSTime, foreground: char, background: char) -> String {
+    clockify_internals::<8>(hms_time, foreground, background)
 }
 
-fn clockify_internals<const D: usize>(hms_time: HMSTime, character: char) -> String {
+fn clockify_internals<const D: usize>(hms_time: HMSTime, foreground: char, background: char) -> String {
     let mut result = [[[false; 3]; 5]; D];
 
     Digits::new(hms_time.hour())
@@ -57,7 +57,9 @@ fn clockify_internals<const D: usize>(hms_time: HMSTime, character: char) -> Str
 
     for row_index in 0..5 {
         for digit in result {
-            result_str.push_str(digit[row_index].iter().map(|c| if *c { character } else { ' ' }).collect::<String>().as_str())
+            digit[row_index]
+                .iter()
+                .for_each(|c| result_str.push(if *c { foreground } else { background }))
         }
 
         result_str.push('\n');
