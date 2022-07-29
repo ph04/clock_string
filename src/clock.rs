@@ -32,23 +32,28 @@ impl HMSTime {
     }
 }
 
-pub fn clockify(hms_time: HMSTime, foreground: char, background: char) -> String {
-    clockify_internals::<5>(hms_time, foreground, background)
+pub fn clockify(hms_time: HMSTime, foreground: char, background: char, padding: usize) -> String {
+    clockify_internals::<5>(hms_time, foreground, background, padding)
 }
 
-pub fn clockify_with_seconds(hms_time: HMSTime, foreground: char, background: char) -> String {
-    clockify_internals::<8>(hms_time, foreground, background)
+pub fn clockify_with_seconds(hms_time: HMSTime, foreground: char, background: char, padding: usize) -> String {
+    clockify_internals::<8>(hms_time, foreground, background, padding)
 }
 
-fn clockify_internals<const D: usize>(hms_time: HMSTime, foreground: char, background: char) -> String {
+fn clockify_internals<const D: usize>(hms_time: HMSTime, foreground: char, background: char, padding: usize) -> String {
     let mut result = [[[false; 3]; 5]; D];
 
     Digits::new(hms_time.hour())
         .into_iter()
-        .chain(iter::once(10))
+        .chain(Some(10))
         .chain(Digits::new(hms_time.minute()))
         .chain(if D == 8 { Some(10) } else { None })
-        .chain(if D == 8 { Digits::new(hms_time.second()).into_iter() } else { DigitsIterator::default() })
+        .chain(if D == 8 {
+                Digits::new(hms_time.second()).into_iter()
+            } else {
+                DigitsIterator::default()
+            }
+        )
         .map(to_ascii_digit)
         .enumerate()
         .for_each(|(idx, array)| result[idx] = array);
@@ -57,9 +62,12 @@ fn clockify_internals<const D: usize>(hms_time: HMSTime, foreground: char, backg
         .flat_map(|row_index| {
             result
                 .iter()
-                .flat_map(move |digit|
-                    digit[row_index].map(|c| if c { foreground } else { background })
-                )
+                .flat_map(move |digit| {
+                    digit[row_index]
+                        .map(|c| if c { foreground } else { background })
+                        .into_iter()
+                        .chain(iter::repeat(background).take(padding))
+                })
                 .chain(Some('\n'))
         })
         .collect::<String>()

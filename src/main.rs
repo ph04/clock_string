@@ -6,7 +6,7 @@ use clock_string::clock::{clockify, HMSTime, clockify_with_seconds};
 
 fn main() {
     // loop {
-        println!("{}", clockify_with_seconds(HMSTime::from(Local::now().time()), '█', ' '));
+        println!("{}", clockify_with_seconds(HMSTime::from(Local::now().time()), '█', ' ', 1));
         // thread::sleep(Duration::from_millis(1000));
         // clearscreen::clear().expect("Failed to clear screen");
     // }

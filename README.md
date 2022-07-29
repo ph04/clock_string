@@ -1,9 +1,9 @@
 # clock-string
 
-This project is stupid.
+This program show the current time in your terminal.
 
 ## TODO list
 
-- [ ] spacing between numbers
+- [ ] padding
 - [x] leading zeros are missing (of course)
 - [x] problem with 00 (idk how to fix it honestly)
